@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: kdsiitd
+      changes:
+        - sqlFile:
+            path: config.sql
+            relativeToChangelogFile: true
+            endDelimiter: ";"
+            splitStatements: true
+            stripComments: true 

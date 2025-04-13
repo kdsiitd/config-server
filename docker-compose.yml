@@ -1,0 +1,28 @@
+version: '3.3'
+
+services:
+  config-server-app:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    container_name: config-server-app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/config_server?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+    ports:
+      - "8888:8888"
+
+  config-server-jobs:
+    build:
+      context: .
+      dockerfile: jobs/Dockerfile
+    container_name: config-server-jobs
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/config_server
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+
+networks:
+  config-network:
+    driver: bridge

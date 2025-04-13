@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS config (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    application VARCHAR(100) NOT NULL,
+    profile VARCHAR(100) NOT NULL,
+    label VARCHAR(100),
+    prop_key VARCHAR(150) NOT NULL,
+    prop_value TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(50) NOT NULL DEFAULT 'SYSTEM',
+    updated_by VARCHAR(50) NOT NULL DEFAULT 'SYSTEM',
+    CONSTRAINT uk_config UNIQUE (application, profile, label, prop_key)
+);
