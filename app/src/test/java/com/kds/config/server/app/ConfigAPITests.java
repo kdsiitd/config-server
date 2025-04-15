@@ -5,8 +5,10 @@ import com.kds.config.server.app.dto.request.ConfigListRequest;
 import com.kds.config.server.app.dto.request.ConfigRequest;
 import com.kds.config.server.app.dto.response.ConfigListResponse;
 import com.kds.config.server.app.dto.response.ConfigResponse;
+import com.kds.config.server.app.exception.ConfigAPIException;
 import com.kds.config.server.core.entity.Config;
 import com.kds.config.server.service.ConfigService;
+import com.kds.config.server.service.exception.ConfigServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -96,7 +98,7 @@ public class ConfigAPITests {
                 testConfig.getProfile(),
                 testConfig.getLabel(),
                 testConfig.getPropKey()))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(ConfigAPIException.class)
                 .hasMessage("Configuration not found");
     }
 
@@ -211,5 +213,62 @@ public class ConfigAPITests {
                 testConfig.getProfile(),
                 testConfig.getLabel(),
                 testConfig.getPropKey());
+    }
+
+    @Test
+    void whenUpdateConfig_thenReturnUpdatedConfig() {
+        when(configService.updateConfig(any(Config.class))).thenReturn(testConfig);
+
+        ConfigResponse response = configAPI.updateConfig(testRequest);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo("SUCCESS");
+        assertThat(response.getMessage()).isEqualTo("Config Updated");
+        assertThat(response.getConfig().getPropValue()).isEqualTo(testConfig.getPropValue());
+    }
+
+    @Test
+    void whenUpdateConfigNotFound_thenThrowException() {
+        when(configService.updateConfig(any(Config.class)))
+                .thenThrow(new ConfigServiceException("NOT_FOUND", "Configuration not found"));
+
+        assertThatThrownBy(() -> configAPI.updateConfig(testRequest))
+                .isInstanceOf(ConfigAPIException.class)
+                .hasMessage("Configuration not found");
+    }
+
+    @Test
+    void whenUpdateConfigs_thenReturnUpdatedConfigs() {
+        when(configService.updateConfig(any(Config.class))).thenReturn(testConfig);
+
+        ConfigListResponse response = configAPI.updateConfigs(testListRequest);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo("SUCCESS");
+        assertThat(response.getMessage()).isEqualTo("Configs Updated Successfully");
+        assertThat(response.getConfigs()).hasSize(1);
+        assertThat(response.getConfigs().get(0).getPropValue()).isEqualTo(testConfig.getPropValue());
+    }
+
+    @Test
+    void whenUpdateConfigsWithEmptyList_thenReturnEmptyList() {
+        testListRequest.setConfigs(Collections.emptyList());
+
+        ConfigListResponse response = configAPI.updateConfigs(testListRequest);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getStatus()).isEqualTo("SUCCESS");
+        assertThat(response.getMessage()).isEqualTo("Configs Updated Successfully");
+        assertThat(response.getConfigs()).isEmpty();
+    }
+
+    @Test
+    void whenUpdateConfigsWithNotFound_thenThrowException() {
+        when(configService.updateConfig(any(Config.class)))
+                .thenThrow(new ConfigServiceException("NOT_FOUND", "Configuration not found"));
+
+        assertThatThrownBy(() -> configAPI.updateConfigs(testListRequest))
+                .isInstanceOf(ConfigAPIException.class)
+                .hasMessage("Configuration not found");
     }
 }

@@ -12,4 +12,8 @@ public class ConfigServiceException extends RuntimeException {
         this.status = status;
         this.message = message;
     }
-} 
+
+    public String getStatus() {
+        return status;
+    }
+}

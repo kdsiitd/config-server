@@ -16,5 +16,9 @@ public interface ConfigAPI {
     
     ConfigListResponse saveConfigs(ConfigListRequest request);
     
+    ConfigResponse updateConfig(ConfigRequest request);
+    
+    ConfigListResponse updateConfigs(ConfigListRequest request);
+    
     void deleteConfig(String application, String profile, String label, String key);
 }

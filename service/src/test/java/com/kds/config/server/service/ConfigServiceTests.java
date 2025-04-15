@@ -2,6 +2,7 @@ package com.kds.config.server.service;
 
 import com.kds.config.server.core.entity.Config;
 import com.kds.config.server.core.repository.ConfigRepository;
+import com.kds.config.server.service.exception.ConfigServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -110,12 +111,18 @@ public class ConfigServiceTests {
                 .thenReturn(Optional.of(testConfig));
 
         assertThat(catchThrowable(() -> configService.createConfig(testConfig)))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(ConfigServiceException.class)
                 .hasMessage("Configuration already exists");
     }
 
     @Test
     void whenDeleteConfig_thenVerifyDeletion() {
+        when(configRepository.existsByApplicationAndProfileAndLabelAndPropKey(
+                testConfig.getApplication(),
+                testConfig.getProfile(),
+                testConfig.getLabel(),
+                testConfig.getPropKey()))
+                .thenReturn(true);
         doNothing().when(configRepository).deleteByApplicationAndProfileAndLabelAndPropKey(
                 testConfig.getApplication(),
                 testConfig.getProfile(),
@@ -128,6 +135,11 @@ public class ConfigServiceTests {
                 testConfig.getLabel(),
                 testConfig.getPropKey());
 
+        verify(configRepository).existsByApplicationAndProfileAndLabelAndPropKey(
+                testConfig.getApplication(),
+                testConfig.getProfile(),
+                testConfig.getLabel(),
+                testConfig.getPropKey());
         verify(configRepository).deleteByApplicationAndProfileAndLabelAndPropKey(
                 testConfig.getApplication(),
                 testConfig.getProfile(),

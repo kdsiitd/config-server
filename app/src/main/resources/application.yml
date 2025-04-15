@@ -34,12 +34,12 @@ spring:
 logging:
   level:
     root: INFO
-    com.kds.config.server: DEBUG
-    org.springframework.jdbc: DEBUG
-    org.hibernate.SQL: DEBUG
+    com.kds.config.server: INFO
+    org.springframework.jdbc: INFO
+    org.hibernate.SQL: INFO
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,env 
+        include: health,info,env,refresh,bus-refresh

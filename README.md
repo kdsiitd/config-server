@@ -139,6 +139,51 @@ Example:
 DELETE /myapp/dev/main/database.url
 ```
 
+### Update Configuration
+
+```
+PUT /api/v1/configs
+```
+
+Request body:
+```json
+{
+  "application": "myapp",
+  "profile": "dev",
+  "label": "main",
+  "key": "database.url",
+  "value": "jdbc:mysql://new-host:3306/mydb"
+}
+```
+
+### Update Multiple Configurations
+
+```
+PUT /api/v1/configs/batch
+```
+
+Request body:
+```json
+{
+  "configs": [
+    {
+      "application": "myapp",
+      "profile": "dev",
+      "label": "main",
+      "key": "database.url",
+      "value": "jdbc:mysql://new-host:3306/mydb"
+    },
+    {
+      "application": "myapp",
+      "profile": "dev",
+      "label": "main",
+      "key": "database.username",
+      "value": "newuser"
+    }
+  ]
+}
+```
+
 ## Docker Deployment
 
 The application can be deployed using Docker and Docker Compose. The `docker-compose.yml` file sets up both the MySQL database and the Config Server application.

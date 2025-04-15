@@ -128,4 +128,55 @@ public class ConfigAPIImpl implements ConfigAPI {
             throw new ConfigAPIException(e.getStatus(), e.getMessage());
         }
     }
+
+    @Override
+    public ConfigResponse updateConfig(ConfigRequest request) {
+        try {
+            Config config = Config.builder()
+                    .application(request.getApplication())
+                    .profile(request.getProfile())
+                    .label(request.getLabel())
+                    .propKey(request.getKey())
+                    .propValue(request.getValue())
+                    .build();
+            
+            Config updatedConfig = configService.updateConfig(config);
+
+            return ConfigResponse.builder()
+                    .status("SUCCESS")
+                    .message("Config Updated")
+                    .config(updatedConfig)
+                    .build();
+        } catch (ConfigServiceException e) {
+            throw new ConfigAPIException(e.getStatus(), e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional
+    public ConfigListResponse updateConfigs(ConfigListRequest request) {
+        try {
+            List<Config> configs = request.getConfigs().stream()
+                    .map(req -> Config.builder()
+                            .application(req.getApplication())
+                            .profile(req.getProfile())
+                            .label(req.getLabel())
+                            .propKey(req.getKey())
+                            .propValue(req.getValue())
+                            .build())
+                    .collect(Collectors.toList());
+
+            List<Config> updatedConfigs = configs.stream()
+                    .map(configService::updateConfig)
+                    .collect(Collectors.toList());
+
+            return ConfigListResponse.builder()
+                    .status("SUCCESS")
+                    .message("Configs Updated Successfully")
+                    .configs(updatedConfigs)
+                    .build();
+        } catch (ConfigServiceException e) {
+            throw new ConfigAPIException(e.getStatus(), e.getMessage());
+        }
+    }
 }
