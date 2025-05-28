@@ -1,0 +1,13 @@
+spring:
+  main:
+    web-application-type: servlet
+  cloud:
+    config:
+      server:
+        git:
+          enabled: false
+
+logging:
+  level:
+    root: INFO
+    com.kds.config.server: DEBUG 
